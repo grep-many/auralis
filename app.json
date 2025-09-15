@@ -1,0 +1,77 @@
+{
+    "expo": {
+        "name": "Auralis",
+        "slug": "auralis",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "scheme": "auralis",
+        "userInterfaceStyle": "automatic",
+        "icon": "./assets/logo.png",
+        "splash": {
+            "image": "./assets/logo.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#6C63FF"
+        },
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.anonymous.auralis",
+            "icon": "./assets/logo.png",
+            "splash": {
+                "image": "./assets/logo.png",
+                "resizeMode": "contain",
+                "backgroundColor": "#6C63FF",
+                "dark": {
+                    "backgroundColor": "#2C2C44"
+                }
+            }
+        },
+        "android": {
+            "package": "com.anonymous.auralis",
+            "icon": "./assets/logo.png",
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/logo.png",
+                "backgroundColor": "#6C63FF",
+                "monochromeImage": "./assets/logo.png"
+            },
+            "splash": {
+                "image": "./assets/logo.png",
+                "resizeMode": "contain",
+                "backgroundColor": "#6C63FF"
+            }
+        },
+        "web": {
+            "favicon": "./assets/logo.png",
+            "splash": {
+                "image": "./assets/logo.png",
+                "resizeMode": "contain",
+                "backgroundColor": "#6C63FF"
+            }
+        },
+        "plugins": [
+            "expo-router",
+            [
+                "expo-splash-screen",
+                {
+                    "image": "./assets/logo.png",
+                    "resizeMode": "contain",
+                    "backgroundColor": "#6C63FF",
+                    "imageWidth": 200,
+                    "dark": {
+                        "backgroundColor": "#2C2C44"
+                    }
+                }
+            ]
+        ],
+        "experiments": {
+            "typedRoutes": true,
+            "reactCompiler": true
+        },
+        "extra": {
+            "router": {},
+            "eas": {
+                "projectId": "7746bb6f-f022-46f6-b6a8-e43236d8bd1c"
+            }
+        },
+        "owner": "ranveersnig"
+    }
+}
