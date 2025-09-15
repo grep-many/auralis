@@ -3,51 +3,59 @@ name: Build Android APK
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build-android:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      # 2️⃣ Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
+      # 4️⃣ Expo prebuild (clean)
       - name: Android prebuild
         run: npx expo prebuild --clean
 
-      - name: Setup JDK 17
+      # 5️⃣ Setup JDK 17
+      - name: Setup JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
+      # 6️⃣ Make Gradle wrapper executable
       - name: Change Gradle wrapper permissions
         run: chmod +x android/gradlew
 
+      # 7️⃣ Build APK and rename
       - name: Build APK
         run: |
           cd android
           ./gradlew assembleRelease
-          cd app/build/outputs/apk/release
-          # rename APK to auralis.apk
-          mv *.apk ../../../auralis.apk
+          # Copy APK to repo root and rename
+          cp app/build/outputs/apk/release/*.apk ../auralis.apk
+          cd ..
 
-      - name: Commit APK to release branch
+      # 8️⃣ Commit APK to release branch
+      - name: Commit APK to apk-release branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git checkout -B apk-release
-          cp android/app/build/outputs/apk/release/auralis.apk .
           git add auralis.apk
           git commit -m "Update APK [skip ci]" || echo "No changes to commit"
           git push --force origin apk-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
