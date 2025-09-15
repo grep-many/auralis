@@ -1,9 +1,7 @@
-name: "Build Android APK"
+name: Build and Release APK
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 jobs:
@@ -11,10 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -39,9 +36,9 @@ jobs:
           cd android
           ./gradlew assembleRelease
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        uses: ncipollo/release-action@v1
         with:
-          name: auralis-android-apk
-          path: android/app/build/outputs/apk/release/app-release.apk
-          retention-days: 365
+          tag: apk-latest
+          name: Auralis APK
+          files: android/app/build/outputs/apk/release/app-release.apk
