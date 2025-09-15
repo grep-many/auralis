@@ -1,62 +1,54 @@
-name: Build & Release Android APK
+name: Build and Release APK
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+
+permissions:
+  contents: write   # required to create releases
 
 jobs:
   build-android:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # 4️⃣ Prebuild Android (Expo Bare)
       - name: Android prebuild
         run: npx expo prebuild --clean
 
-      # 5️⃣ Setup Java for Gradle
       - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: 'temurin'
+          java-version: '17'
 
-      # 6️⃣ Make Gradle wrapper executable
       - name: Change Gradle wrapper permissions
         run: chmod +x android/gradlew
 
-      # 7️⃣ Build APK dynamically
       - name: Build APK
         run: |
           cd android
           ./gradlew assembleRelease
           cd app/build/outputs/apk/release
+          # rename APK dynamically
           APK_FILE=$(ls *.apk | head -n 1)
-          mv "$APK_FILE" ../../../auralis.apk
-          echo "APK generated: ../../../auralis.apk"
+          mv "$APK_FILE" auralis.apk
+          echo "APK_PATH=android/app/build/outputs/apk/release/auralis.apk" >> $GITHUB_ENV
 
-      # 8️⃣ Create or update GitHub Release
-      - name: Create/Update Release
+      - name: Create GitHub Release with APK
         uses: ncipollo/release-action@v1
         with:
           tag: apk-latest
-          name: Auralis APK
-          files: android/app/build/outputs/auralis.apk
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: "Auralis Android APK"
+          body: "Latest automated APK build for Auralis 🚀"
+          artifacts: ${{ env.APK_PATH }}
+          token: ${{ secrets.GITHUB_TOKEN }}
